@@ -1,0 +1,14 @@
+{
+  "valid_device": {
+    "serial": "M2EXRGRL",
+    "verification_code": "123456",
+    "name_of_device": "Office"
+  },
+  "invalid_device": {
+    "serial": "QRBWYDB",
+    "verification_code": "123456"
+  },
+   "name_device": {
+    "name_of_device": "Office"
+  }
+}

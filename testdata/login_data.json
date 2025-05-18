@@ -1,0 +1,11 @@
+
+{
+  "valid_user": {
+    "username": "primary@olarm.local",
+    "password": "DiasLunch@1pm"
+  },
+  "invalid_user": {
+    "username": "wronguser",
+    "password": "wrongpass"
+  }
+}
