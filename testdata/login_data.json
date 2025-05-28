@@ -5,7 +5,7 @@
     "password": "DiasLunch@1pm"
   },
   "invalid_user": {
-    "username": "wronguser",
-    "password": "wrongpass"
+    "username": "wronguser@olarm.local",
+    "password": "wrongpass123"
   }
 }

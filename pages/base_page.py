@@ -58,15 +58,15 @@ class BasePage:
             raise  # <- This ensures the test actually fails
 
     def is_visible(self, locator, timeout=10):
-        """Return True if the element is visible within the timeout."""
+        """Return the element if it becomes visible within the timeout, else None."""
         try:
             element = WebDriverWait(self.driver, timeout).until(
                 EC.visibility_of_element_located(locator)
             )
-            return element.is_displayed()
+            return element  # ✅ Return the actual element
         except Exception as e:
             self._log_error(locator, "is_visible", e)
-            return False
+            return None
 
     def wait_until_clickable(self, locator, timeout=10):
         """Wait until an element becomes clickable and return it."""
@@ -106,3 +106,15 @@ class BasePage:
         self.driver.save_screenshot(screenshot_path)
         print(f" Failed to {action} on {locator}. Screenshot saved to {screenshot_path}. Reason: {error}")
         traceback.print_exc()
+
+def click(self, locator, timeout=10):
+    try:
+        print(f"[Clicking] Trying to click: {locator}")
+        element = WebDriverWait(self.driver, timeout).until(
+            EC.element_to_be_clickable(locator)
+        )
+        element.click()
+    except TimeoutException:
+        print(f"[Error] Failed to click on {locator}")
+        self.driver.save_screenshot("click_error.png")
+        raise  # ✅ Important: re-raise the error so test fails

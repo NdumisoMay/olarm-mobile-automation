@@ -1,0 +1,20 @@
+{
+    "SQL_injection_tests": [
+    {
+      "username": "admin'--",
+      "password": "anything"
+    },
+    {
+      "username": "' OR 1=1 --",
+      "password": "1234"
+    },
+    {
+      "username": "' OR 'a'='a",
+      "password": "xyz"
+    },
+    {
+      "username": "'; DROP TABLE users; --",
+      "password": "irrelevant"
+    }
+  ]
+}

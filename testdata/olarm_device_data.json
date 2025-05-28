@@ -1,14 +1,25 @@
 {
   "valid_device": {
-    "serial": "M2EXRGRL",
-    "verification_code": "123456",
-    "name_of_device": "Office"
+    "serial": "M2NTD344",
+    "verification_code": "728100"
   },
   "invalid_device": {
     "serial": "QRBWYDB",
     "verification_code": "123456"
   },
    "name_device": {
-    "name_of_device": "Office"
+    "name_of_device": "Test_Automation"
+  },
+
+    "UDL_master_data": {
+      "input_1": 1,
+      "input_2": 2,
+      "input_3": 3,
+      "input_4": 4
+  },
+
+  "Wifi_creds": {
+    "Wifi": "Olarm",
+    "PWD": "Brazilisdangerous"
   }
 }
