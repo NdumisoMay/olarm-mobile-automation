@@ -1,3 +1,4 @@
+import os
 import time
 from socket import send_fds
 
@@ -93,9 +94,26 @@ class AddDevicePage(BasePage):
             self.driver.save_screenshot("next_screen_not_found.png")
             return False
 
+    #skip steps
+    skip_step_master_btn = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().description("Skip this step")')
+    skip_step_wifi_btn = (AppiumBy.XPATH,'new UiSelector().resourceId("button")')
+
+    def skip_udl_master(self):
+        self.click(self.skip_step_master_btn)
+
+    def skip_wifi(self):
+        self.click(self.skip_step_wifi_btn)
+
+    #device setup button
+    device_setup_btn = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().description("Device setup")')
+
+    def add_device_device_setup(self):
+        self.click(self.device_setup_btn)
+
     click_wifi = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().description("Olarm")')
     wifi_pass = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("text-input-outlined")')
     connect_wifi_btn = (AppiumBy.ACCESSIBILITY_ID,'Connect to network')
+    wifi_con_success = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Connected to Olarm")')
 
 
     def wifi_conn(self, password):
@@ -106,15 +124,28 @@ class AddDevicePage(BasePage):
     def click_wifi_connect_btn(self):
         self.click(self.connect_wifi_btn)
 
-    def is_wifi_page_loaded(self):
+    def is_connect_to_network_btn_visible(self):
+        return self.is_visible(self.connect_wifi_btn)
+
+    # def is_wifi_connected(self, timeout=20):
+    #     return self.is_visible(self.wifi_con_success)
+
+    def get_error_message(self):
+        try:
+            return self.driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,
+                                            'new UiSelector().text("Try again")').text
+        except:
+            return ""
+
+    def is_wifi_connected(self):
         """Check if the Connect to network button is visible."""
         try:
-            WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located(self.connect_wifi_btn)
+            WebDriverWait(self.driver, 47).until(
+                EC.presence_of_element_located(self.wifi_con_success)
             )
             return True
         except TimeoutException:
-            self.driver.save_screenshot("wifi_page_not_loaded.png")
+            self.driver.save_screenshot("wifi_not_connected.png")
             return False
 
     def get_error_message_existing_device(self):
@@ -129,7 +160,20 @@ class AddDevicePage(BasePage):
         except:
             return ""
 
-
+    def is_your_device_added(self, timeout=10):
+        locator = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Device Added Successfully.")')
+        try:
+            element = WebDriverWait(self.driver, timeout).until(
+                EC.presence_of_element_located(locator)
+            )
+            return element.text
+        except Exception as e:
+            screenshot_path = os.path.join(os.getcwd(), "device_added_fail.png")
+            self.driver.save_screenshot(screenshot_path)
+            print(f"[❌] 'Device Added Successfully.' not found. Screenshot saved at: {screenshot_path}")
+            print(f"[⚠️] Exception: {e}")
+            print(f"[📄] Page source:\n{self.driver.page_source}")
+            return ""
 
 
 

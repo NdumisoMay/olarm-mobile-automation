@@ -14,6 +14,12 @@ class LoginPage(BasePage):
         self.type(self.password_input, password)
         self.click(self.login_button)
 
+    def is_username_visible(self):
+        return self.is_visible(self.username_input)
+
+    def is_password_visible(self):
+        return self.is_visible(self.password_input)
+
     def is_logged_in(self):
         return self.driver.find_elements(AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("My Devices")') != []
 

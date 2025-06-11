@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from helpers.common_tests import do_login
+from helpers.common_tests import do_login, first_login_btn
 from pages import add_device_page
 from pages.add_device_page import AddDevicePage
 from pages.base_page import BasePage
@@ -15,11 +15,13 @@ from appium.webdriver.appium_service import AppiumService
 class TestAddDevicePanel:
 
     def test_add_device(self, driver):
+        first_login_btn(driver)
+        #print(driver.page_source)
         do_login(driver)
         add_device_btn = AddDevicePage(driver)
         # Scroll to the element by its content-description before clicking it
         add_device_btn.scroll_to_description("Add Olarm Device")
-        time.sleep(1.5)
+        #time.sleep(1.5)
         add_device_btn.click_add_device()
 
 
@@ -62,13 +64,21 @@ class TestAddDevicePanel:
     def test_wifi_conn(self, driver):
         data = read_device_details("Wifi_creds")
         page = AddDevicePage(driver)
-        time.sleep(20)
+        time.sleep(10)
         page.wifi_conn(data["PWD"])
+        assert page.is_connect_to_network_btn_visible(), "❌ Connect to network button is not visible"
+        print("✅ Connect to network button is not visible")
 
 
-    def test_connect_wifi_btn(self, driver):
+    def test_connect_to_wifi(self, driver):
         page = AddDevicePage(driver)
         page.click_wifi_connect_btn()
-        assert page.is_wifi_page_loaded(), "❌ 'Connect to network' page did not load."
+        assert page.is_wifi_connected(), "Connected to network successfully"
+        assert not page.get_error_message(),"Wifi connection failed"
+
+    # def test_reset_app(self,driver_with_uninstall):
+    #     # This test will uninstall the app after it runs
+    #     ...
+
 
 

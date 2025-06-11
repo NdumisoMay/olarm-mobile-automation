@@ -24,3 +24,14 @@ def read_sql_injection_data(key):
     if not isinstance(result, list):
         raise TypeError(f"Expected list for key '{key}', but got {type(result).__name__}")
     return result
+
+def read_cell_no_data(key):
+    file_path = os.path.join(os.path.dirname(__file__), '../testdata/phone_no_data.json')
+    with open(file_path) as f:
+        data = json.load(f)
+    result = data.get(key)
+    if result is None:
+        raise ValueError(f"No data found for key: {key}")
+    if not isinstance(result, list):
+        raise TypeError(f"Expected list for key '{key}', but got {type(result).__name__}")
+    return result

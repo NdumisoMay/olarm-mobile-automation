@@ -5,15 +5,36 @@ class LogOutPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    drawer_menu = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("icon-button").instance(1)')
-    drawer_menu_my_devices= (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("icon-button")')
+    # More specific locators
+    drawer_menu = (AppiumBy.XPATH,'(//android.widget.Button[@resource-id="icon-button"])[2]')
+    drawer_menu_my_devices = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().resourceId("icon-button")')
     logout_btn = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().description("Logout")')
+    login_button = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().description("Login")')
+
 
     def logout_user(self):
-        self.click(self.drawer_menu)
-        self.click(self.logout_btn)
+        """Perform logout and verify the action"""
+        # Wait for and click the drawer menu
+        self.wait_and_click(self.drawer_menu)
+        
+        # Wait for and click logout
+        self.wait_and_click(self.logout_btn)
+        
+        # Verify we're logged out by checking for login button
+        return self.is_visible(self.login_button)
 
     def logout_my_devices(self):
-        self.click(self.drawer_menu_my_devices)
-        self.click(self.logout_btn)
+        """Perform logout from my devices and verify the action"""
+        # Wait for and click the my devices menu
+        self.wait_and_click(self.drawer_menu_my_devices)
+        
+        # Wait for and click logout
+        self.wait_and_click(self.logout_btn)
+        
+        # Verify we're logged out
+        return self.is_visible(self.login_button)
+
+    def is_logged_out(self):
+        """Verify if user is logged out by checking for login button"""
+        return self.is_visible(self.login_button, timeout=5)
 

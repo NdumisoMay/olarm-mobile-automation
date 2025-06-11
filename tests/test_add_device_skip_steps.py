@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from helpers.common_tests import first_login_btn
+from helpers.common_tests import first_login_btn, do_add_device_name
 from pages import add_device_page
 from pages.add_device_page import AddDevicePage
 from pages.base_page import BasePage
@@ -49,12 +49,55 @@ class TestAddDevicePanel:
         time.sleep(2)
         assert add_device.is_name_your_device_page_loaded() == "Name your Olarm device."
 
+    def test_add_device_name(self,driver):
+        do_add_device_name(driver)
+        name_device = AddDevicePage(driver)
+        assert name_device.is_your_device_added() == "Device Added Successfully."
 
-    def test_add_device_name(self, driver):
-        valid_device_name = read_device_details("name_device")
-        add_device_name = AddDevicePage(driver)
-        add_device_name.name_device(valid_device_name["name_of_device"])
-        assert add_device_name.get_error_message_existing_device() == "Permission Denied. Device already belongs to someone else."
+    def test_connect_security_system(self, driver):
+        connect_sys = AddDevicePage(driver)
+        connect_sys.connect_to_security_sys()
+
+        expected_txt = "Enter your UDL Code"
+        actual_text = connect_sys.get_text(
+            (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Enter your UDL Code")')
+        )
+
+        assert (
+                actual_text == expected_txt
+        ), f"Expected '{expected_txt}', but got '{actual_text}'"
+
+
+    def test_skip_udl_master(self, driver):
+        skip_udl = AddDevicePage(driver)
+        skip_udl.skip_udl_master()
+        expected_txt = "Connect your Olarm device to your Wi-Fi network for improved speed and reliability."
+
+        actual_text = skip_udl.get_text(
+            (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Connect your Olarm device to your Wi-Fi network for improved speed and reliability.")')
+        )
+
+        assert (
+                actual_text == expected_txt
+        ), f"Expected '{expected_txt}', but got '{actual_text}'"
+
+
+    def test_skip_wifi_page(self, driver):
+        skip_wi = AddDevicePage(driver)
+        # Scroll to the element by its content-description before clicking it
+        skip_wi.scroll_to_description("Skip this step")
+        time.sleep(1.5)
+        skip_wi.skip_wifi()
+        expected_txt = "Area 1"
+
+        actual_text = skip_wi.get_text(
+            (AppiumBy.ANDROID_UIAUTOMATOR,
+             'new UiSelector().text("Area 1")')
+        )
+
+        assert (
+                actual_text == expected_txt
+        ), f"Expected '{expected_txt}', but got '{actual_text}'"
 
     # def test_reset_app(self,driver_with_uninstall):
     #     # This test will uninstall the app after it runs

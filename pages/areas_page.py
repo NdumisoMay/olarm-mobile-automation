@@ -16,10 +16,11 @@ class AreasPage(BasePage):
     status = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Armed")')
     status_disarmed = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Disarmed")')
     timestamp = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text(" • Now")')
+    stay_btn = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("icon-button").instance(5)')
+    sleep_arm_btn = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("icon-button").instance(6)')
 
-    from appium.webdriver.common.appiumby import AppiumBy
 
-    def get_area_info_by_label(self, label_text):
+    def get_area_info_by_label(self, label_text, timeout=10):
         # Locate the parent container for the area
         area_container = self.driver.find_element(
             AppiumBy.XPATH,
@@ -39,7 +40,7 @@ class AreasPage(BasePage):
         # Check each text element for matching content
         for element in text_elements:
             text = element.text.strip()
-            if text.lower() in ["armed", "disarmed"]:
+            if text.lower() in ["armed","stay armed","sleep armed", "disarmed"]:
                 status = text
             elif "now" in text.lower():
                 timestamp = text
@@ -57,7 +58,7 @@ class AreasPage(BasePage):
 
     arm_button = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("icon-button").instance(4)')
 
-    activity = (AppiumBy.ACCESSIBILITY_ID,'Activity')
+    #activity = (AppiumBy.ACCESSIBILITY_ID,'Activity')
 
     def get_area_container_by_label(self, label_text):
         return self.driver.find_element(
@@ -87,5 +88,32 @@ class AreasPage(BasePage):
             return self.driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,
                                             (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().textContains("Disarmed")')
 ).text
+        except:
+            return ""
+
+
+    #------------------
+
+    def stay_arm(self):
+        self.click(self.stay_btn)
+        time.sleep(4)
+
+    def is_panel_stay_armed(self):
+        try:
+            return self.driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,
+                                            (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Stay Armed")')
+                                            ).text
+        except:
+            return ""
+
+    def sleep_arm(self):
+        self.click(self.sleep_arm_btn)
+        time.sleep(4)
+
+    def is_panel_sleep_armed(self):
+        try:
+            return self.driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR,
+                                            (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("icon-button").instance(6)')
+                                            ).text
         except:
             return ""
