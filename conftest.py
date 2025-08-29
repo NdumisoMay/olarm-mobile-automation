@@ -25,13 +25,13 @@ def wait_for_appium(timeout=10):
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
-            res = requests.get("http://localhost:4723/status")
+            res = requests.get("http://localhost:4725/wd/hub/status")
             if res.status_code == 200:
                 print("✅ Appium server is live")
                 return
         except requests.exceptions.ConnectionError:
             pass
-        time.sleep(1)
+        time.sleep(2)
     raise RuntimeError("❌ Appium server failed to start within timeout")
 
 def check_device_farm_server():
@@ -77,11 +77,26 @@ def device_id(request):
 def start_appium(use_device_farm):
     if not use_device_farm:
         # Only start local Appium server for local testing
-        if appium_service.is_running:
+        # Force stop any existing Appium service
+        try:
             appium_service.stop()
+        except:
+            pass
+        
+        # Kill any existing processes on port 4725
+        import subprocess
+        try:
+            subprocess.run(['pkill', '-f', 'appium.*4725'], capture_output=True)
+            import time
+            time.sleep(2)
+        except:
+            pass
 
         # Configure Appium service with custom port and base path
-        appium_service.start(args=['--port', '4724', '--base-path', '/wd/hub'])
+        appium_service.start(args=['--port', '4725', '--base-path', '/wd/hub', '--log', 'appium.log'])
+        
+        # Wait for Appium server to be ready
+        wait_for_appium()
 
     yield
 
@@ -112,6 +127,31 @@ def driver(start_appium, use_device_farm, platform, device_id):
                 print("🧹 Driver cleaned up successfully")
             except Exception as e:
                 print(f"[WARNING] Error during driver cleanup: {e}")
+
+@pytest.fixture(scope="session")
+def session_driver(start_appium, use_device_farm, platform, device_id):
+    """Session-scoped driver that persists across multiple tests"""
+    driver = None
+    try:
+        # Initialize driver with device farm configuration if specified
+        driver = init_driver(
+            use_device_farm=use_device_farm,
+            platform=platform,
+            device_id=device_id
+        )
+        print(f"{'Device Farm' if use_device_farm else 'Local'} {platform} session driver initialized successfully")
+        
+        yield driver
+    except Exception as e:
+        print(f"❌ Failed to initialize session driver: {str(e)}")
+        raise
+    finally:
+        if driver:
+            try:
+                driver.quit()
+                print("🧹 Session driver cleaned up successfully")
+            except Exception as e:
+                print(f"[WARNING] Error during session driver cleanup: {e}")
 
 @pytest.fixture
 def driver_with_uninstall(start_appium, use_device_farm, platform, device_id):

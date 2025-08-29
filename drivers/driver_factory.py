@@ -11,11 +11,18 @@ def wait_for_server(url, timeout=60, interval=5):
     start_time = time.time()
     while time.time() - start_time < timeout:
         try:
+            # Try both with and without /wd/hub path
             response = requests.get(f"{url}/status", timeout=5)
             if response.status_code == 200:
                 return True
         except:
-            pass
+            try:
+                # Try with /wd/hub path
+                response = requests.get(f"{url}/wd/hub/status", timeout=5)
+                if response.status_code == 200:
+                    return True
+            except:
+                pass
         time.sleep(interval)
     return False
 

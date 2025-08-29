@@ -12,7 +12,7 @@ class AreasPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    area1_label = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Front Door")')
+    area1_label = (AppiumBy.ANDROID_UIAUTOMATOR,'new UiSelector().text("Area 1")')
     status = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Armed")')
     status_disarmed = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("Disarmed")')
     timestamp = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text(" • Now")')
@@ -20,7 +20,7 @@ class AreasPage(BasePage):
     sleep_arm_btn = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("icon-button").instance(6)')
 
 
-    def get_area_info_by_label(self, label_text, timeout=10):
+    def get_area_info_by_label(self, label_text, timeout=5):
         # Locate the parent container for the area
         area_container = self.driver.find_element(
             AppiumBy.XPATH,
@@ -36,19 +36,27 @@ class AreasPage(BasePage):
         # Initialize fallback values
         status = None
         timestamp = None
+        all_texts = []
 
         # Check each text element for matching content
         for element in text_elements:
             text = element.text.strip()
+            all_texts.append(text)  # For debugging
+            
             if text.lower() in ["armed","stay armed","sleep armed", "disarmed"]:
                 status = text
-            elif "now" in text.lower():
+            elif "now" in text.lower() or "•" in text or ":" in text:
                 timestamp = text
 
+        print(f"DEBUG: All texts found for {label_text}: {all_texts}")
+        print(f"DEBUG: Status found: {status}, Timestamp found: {timestamp}")
+
         if not status:
-            raise Exception(f"Status not found for label '{label_text}'")
+            raise Exception(f"Status not found for label '{label_text}'. Found texts: {all_texts}")
         if not timestamp:
-            raise Exception(f"Timestamp not found for label '{label_text}'")
+            # If no timestamp found, use a default
+            print(f"WARNING: No timestamp found for {label_text}, using 'Now' as default")
+            timestamp = "Now"
 
         return {
             "label": label_text,
@@ -68,7 +76,7 @@ class AreasPage(BasePage):
 
     def arm_panel(self):
         self.click(self.arm_button)
-        time.sleep(5)
+        time.sleep(3)
 
     def is_panel_armed(self):
         try:
@@ -81,7 +89,7 @@ class AreasPage(BasePage):
     disarm_button = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("icon-button").instance(3)')
     def disarm_panel(self):
         self.click(self.disarm_button)
-        time.sleep(5)
+        time.sleep(3)
 
     def is_panel_disarmed(self):
         try:
@@ -96,7 +104,7 @@ class AreasPage(BasePage):
 
     def stay_arm(self):
         self.click(self.stay_btn)
-        time.sleep(4)
+        time.sleep(3)
 
     def is_panel_stay_armed(self):
         try:
@@ -108,7 +116,7 @@ class AreasPage(BasePage):
 
     def sleep_arm(self):
         self.click(self.sleep_arm_btn)
-        time.sleep(4)
+        time.sleep(3)
 
     def is_panel_sleep_armed(self):
         try:

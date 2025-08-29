@@ -19,7 +19,7 @@ class BasePage:
     def __init__(self, driver):
         self.driver = driver
 
-    def wait_and_click(self, locator, timeout=10):
+    def wait_and_click(self, locator, timeout=5):
         """Wait for an element to be clickable and then click it."""
         try:
             element = self.wait_until_clickable(locator, timeout)
@@ -29,7 +29,7 @@ class BasePage:
             self._log_error(locator, "wait_and_click", e)
             raise
 
-    def click(self, locator, timeout=10):
+    def click(self, locator, timeout=5):
         """Wait and click using normal click, fallback to W3C tap if click fails."""
         try:
             print(f"[Clicking] Trying to click: {locator}")
@@ -84,7 +84,7 @@ class BasePage:
             self._log_error(locator, "is_visible", e)
             raise
 
-    def is_element_visible(self, locator, timeout=10):
+    def is_element_visible(self, locator, timeout=5):
         try:
             WebDriverWait(self.driver, timeout).until(
                 EC.visibility_of_element_located(locator)
@@ -93,7 +93,7 @@ class BasePage:
         except:
             return False
 
-    def wait_until_clickable(self, locator, timeout=10):
+    def wait_until_clickable(self, locator, timeout=5):
         """Wait until an element becomes clickable and return it."""
         try:
             return WebDriverWait(self.driver, timeout).until(
@@ -103,7 +103,7 @@ class BasePage:
             self._log_error(locator, "wait_until_clickable", e)
             raise
 
-    def get_text(self, locator, timeout=10):
+    def get_text(self, locator, timeout=5):
         """Wait for visibility and get text from the element."""
         try:
             element = WebDriverWait(self.driver, timeout).until(

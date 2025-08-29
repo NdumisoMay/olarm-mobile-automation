@@ -6,8 +6,22 @@ class LoginPage(BasePage):
         super().__init__(driver)
 #Locate elements
     username_input = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("text-input-outlined").instance(0)')
-    password_input = (AppiumBy.XPATH, '((//android.widget.EditText[@resource-id="text-input-outlined"])[2])')
+    password_input = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("text-input-outlined").instance(1)')
     login_button = (AppiumBy.ACCESSIBILITY_ID, "Login")
+
+    #Old app locators
+    username_old_app = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("pageLoginEmail")')
+    password_old_app = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().resourceId("pageLoginPass")')
+    sign_in_button_classic_app = (AppiumBy.XPATH, '//android.widget.Button[@text="Sign In"]')
+    login_btn_classic = (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().className("android.widget.Button")')
+
+#Old app login method
+    def old_app_login(self, username, password):
+        self.click(self.sign_in_button_classic_app)
+        self.type(self.username_old_app, username)
+        self.type(self.password_old_app, password)
+        self.click(self.login_btn_classic) 
+
 
     def login(self, username, password):
         self.type(self.username_input, username)

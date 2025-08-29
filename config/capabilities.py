@@ -20,12 +20,13 @@ android_caps = {
     "platformName": "Android",
     "automationName": "UiAutomator2",
     "deviceName": "emulator-5554",
-    "app": android_app,
+    # Removed "app" to prevent automatic installation during driver creation
     "appPackage": "com.olarm.olarm1",
     "appActivity": "com.olarm.olarm1.MainActivity",
-    "noReset": False,
-    "fullReset": True,
-    "autoGrantPermissions": True,
+    "noReset": True,  # Changed to True to prevent unnecessary resets
+    "fullReset": False,  # Changed to False to prevent full reset during initialization
+    "autoLaunch": False,  # Added to prevent auto-launch during initialization
+    "autoGrantPermissions": True,  # Changed back to True to prevent permission dialogs
     "newCommandTimeout": 300,
     "adbExecTimeout": 60000,
     "uiautomator2ServerLaunchTimeout": 60000,
@@ -38,10 +39,10 @@ android_base_caps = {
     "automationName": "UiAutomator2",
     "appWaitActivity": "*",
     "appWaitForLaunch": True,
-    "autoLaunch": True,
-    "autoGrantPermissions": True,
-    "noReset": False,
-    "fullReset": True,
+    "autoLaunch": False,  # Changed to False to prevent auto-launch during initialization
+    "autoGrantPermissions": True,  # Changed back to True to prevent permission dialogs
+    "noReset": True,  # Changed to True to prevent unnecessary resets
+    "fullReset": False,  # Changed to False to prevent full reset during initialization
     "newCommandTimeout": 300,
     # Debug logging
     "printPageSourceOnFindFailure": True,
@@ -49,7 +50,7 @@ android_base_caps = {
     "uiautomator2ServerLaunchTimeout": 60000,
     "uiautomator2ServerInstallTimeout": 60000,
     "remoteAppsCacheLimit": 0,
-    "enforceAppInstall": True
+    "enforceAppInstall": False  # Changed to False to prevent forced install during initialization
 }
 
 ios_base_caps = {
@@ -82,13 +83,13 @@ def get_device_farm_caps(platform="android", device_id=None):
     # Start with base capabilities
     caps = base_caps.copy()
     
-    # Set app path
+    # Set app path (removed automatic app installation)
     if platform == "android":
-        caps["app"] = android_app
+        # Removed "app" to prevent automatic installation during driver creation
         caps["appPackage"] = "com.olarm.olarm1"
         caps["appActivity"] = "com.olarm.olarm1.MainActivity"
     else:
-        caps["app"] = ios_app
+        # Removed "app" to prevent automatic installation during driver creation
         caps["bundleId"] = "com.olarm.olarm1"
     
     # Add device ID if provided
@@ -127,7 +128,7 @@ network_config = {
 
 # Device Farm configuration
 device_farm_config = {
-    "server_url": "http://localhost:4724/wd/hub",
+    "server_url": "http://localhost:4725/wd/hub",
     "app_package": "com.olarm.olarm1",
     "connect_timeout": 60000,
     "command_timeout": 60000,
@@ -140,7 +141,9 @@ local_config = {
     "android": {
         **android_base_caps,
         "deviceName": "emulator-5554",
-        "app": android_app
+        "app": android_app,
+        "appPackage": "com.olarm.olarm1",
+        "appActivity": "com.olarm.olarm1.MainActivity"
     },
     "ios": {
         **ios_base_caps,
